@@ -1,5 +1,6 @@
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
 use actix_files::Files;
+use serde::Serialize;
 
 #[get("/hellow_world")]
 async fn hello() -> impl Responder {
@@ -11,8 +12,17 @@ async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
 }
 
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
+#[derive(Serialize)]
+struct Message {
+    text: String,
+}
+
+async fn manual_hello() -> web::Json<Message> {
+    web::Json(
+        Message {
+            text: String::from("HeloooOOOooOOO")
+        }
+    )
 }
 
 #[actix_web::main]
