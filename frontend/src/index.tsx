@@ -8,7 +8,7 @@ const rootEl = document.getElementById('root');
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60,
+      staleTime: 60_000,
     },
   },
 });

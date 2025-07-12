@@ -4,7 +4,7 @@ import './App.css';
 const App = () => {
   const apiResponse = useQuery({
     queryKey: ['theOnlyApi'],
-    queryFn: () => async () => (await fetch("http://localhost:3000/api/hey"))
+    queryFn: async () => (await fetch("http://localhost:3000/api/hey")).json()
   });
 
   return (
@@ -17,7 +17,7 @@ const App = () => {
         apiResponse.status === 'pending' && <p>Loading...</p>
       }
       {
-        apiResponse.status === 'pending' && <p>Data: {apiResponse.data}</p>
+        apiResponse.status === 'success' && <p>Data: {apiResponse.data.text}</p>
       }
     </div>
   );
