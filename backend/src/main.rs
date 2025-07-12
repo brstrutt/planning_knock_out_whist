@@ -2,22 +2,13 @@ use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
 use actix_files::Files;
 use serde::Serialize;
 
-#[get("/hellow_world")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
 #[derive(Serialize)]
 struct Message {
     text: String,
 }
 
-async fn manual_hello() -> web::Json<Message> {
+#[get("/hey")]
+async fn hey() -> web::Json<Message> {
     web::Json(
         Message {
             text: String::from("HeloooOOOooOOO")
@@ -31,9 +22,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(
                 web::scope("/api")
-                .service(hello)
-                .service(echo)
-                .route("/hey", web::get().to(manual_hello))
+                .service(hey)
             )
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(Files::new("/", "./public").index_file("index.html").prefer_utf8(true))
