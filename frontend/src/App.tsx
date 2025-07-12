@@ -1,10 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import './App.css';
 
 const App = () => {
+  const apiResponse = useQuery({
+    queryKey: ['theOnlyApi'],
+    queryFn: () => async () => (await fetch("http://localhost:8080/api/hellow_world")).json()
+  });
+
   return (
     <div>
-      <h1>Rsbuild with React</h1>
-      <p>Start building amazing things with Rsbuild.</p>
+      <h1>Testing the API!</h1>
+      {
+        apiResponse.status === 'error' && <p>Oh NOOOO! an ERRROR!</p>
+      }
+      {
+        apiResponse.status === 'pending' && <p>Loading...</p>
+      }
+      {
+        apiResponse.status === 'pending' && <p>Data: {apiResponse.data}</p>
+      }
     </div>
   );
 };
