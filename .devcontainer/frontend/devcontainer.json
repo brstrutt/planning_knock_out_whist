@@ -6,5 +6,12 @@
 	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
 	"postCreateCommand": "npm install",
   	"workspaceFolder": "/workspaces/planning_knock_out_wist/frontend",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/planning_knock_out_wist,type=bind,consistency=cached"
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/planning_knock_out_wist,type=bind,consistency=cached",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"fill-labs.dependi"
+			]
+		}
+	}
 }
