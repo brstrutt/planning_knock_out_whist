@@ -19,9 +19,12 @@ async fn manual_hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .service(
+                web::scope("/api")
+                .service(hello)
+                .service(echo)
+                .route("/hey", web::get().to(manual_hello))
+            )
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(Files::new("/", "./public").index_file("index.html").prefer_utf8(true))
     })
