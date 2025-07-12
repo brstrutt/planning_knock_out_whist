@@ -8,7 +8,7 @@ services:
   frontend:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
     volumes:
-      - ../../..:/workspaces:cached
+      - ../..:/workspaces/planning_knock_out_whist:cached
     networks:
       - shared
     command: sleep infinity

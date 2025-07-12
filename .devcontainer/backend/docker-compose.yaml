@@ -8,7 +8,8 @@ services:
   backend:
     image: mcr.microsoft.com/devcontainers/rust:1-1-bullseye
     volumes:
-      - ../../..:/workspaces:cached
+      - ../..:/workspaces/planning_knock_out_whist:cached
+      - ../../frontend/dist:/workspaces/planning_knock_out_whist/backend/public:cached
     networks:
       - shared
     command: sleep infinity
