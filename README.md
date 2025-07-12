@@ -7,7 +7,7 @@ Split into a Rust/Arctix backend and a Typescript/React frontend.
 
 See their relevant readmes for more details:
 - [Backend Readme](./backend/README.md)
-- Frontend Readme (not written yet)
+- [Frontend Readme] (./frontend/README.md)
 
 ## Dev environment
 

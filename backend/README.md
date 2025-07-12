@@ -6,9 +6,9 @@ This service is intended to serve the web frontend, and to provide an API that t
 ## Tools
 
 - Rust (programming language)
-- Actix (Backend framework)
-- Cargo (Build tool)
-- cargo-watch (Enhancement to Cargo that automatically rebuilds the project when the code changes)
+- Actix (backend framework)
+- Cargo (build tool)
+- cargo-watch (enhancement to Cargo that automatically rebuilds the project when the code changes)
 
 ## How to develop
 
