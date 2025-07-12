@@ -7,10 +7,11 @@ Split into a Rust/Arctix backend and a Typescript/React frontend.
 
 See their relevant readmes for more details:
 - [Backend Readme](./backend/README.md)
-- [Frontend Readme] (./frontend/README.md)
+- [Frontend Readme](./frontend/README.md)
 
 ## Dev environment
 
-The dev environment uses devcontainers so you shouldn't need to setup the environment yourself. Just opening a devcontainer should be enough to start development.
-I intend to create one devcontainer for the backend, and a separate devcontainer for the frontend.
-So far only the backend devcontainer has been created.
+In order to develop this repo there are two devcontainers, one for frontend one for backend.
+To run the full application you currently need to open both devcontainers simultaneously.
+Run the backend service in one, then run the frontend dev server in the other.
+
