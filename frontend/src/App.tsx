@@ -1,24 +1,39 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import './App.css';
 
 const App = () => {
-  const apiResponse = useQuery({
+  const getData = useQuery({
     queryKey: ['theOnlyApi'],
-    queryFn: async () => (await fetch("/api/hey")).json()
+    queryFn: async () => (await fetch('/api/hey')).json()
+  });
+
+  const setData = useMutation({
+    mutationFn: async (newText: string) => (await fetch(
+      '/api/hey',
+      {
+        method: 'POST',
+        body: JSON.stringify({text: newText})
+      }
+    )),
+    onSuccess: () => getData.refetch()
   });
 
   return (
     <div>
       <h1>Testing the API!</h1>
       {
-        apiResponse.status === 'error' && <p>Oh NOOOO! an ERRROR!</p>
+        getData.status === 'error' && <p>Oh NOOOO! an ERRROR!</p>
       }
       {
-        apiResponse.status === 'pending' && <p>Loading...</p>
+        getData.status === 'pending' && <p>Loading...</p>
       }
       {
-        apiResponse.status === 'success' && <p>Data: {apiResponse.data.text}</p>
+        getData.status === 'success' && <p>Data: {getData.data.text}</p>
       }
+
+      <button onClick={() => setData.mutate('NEW TEXT')}>
+        CLICK ME
+      </button>
     </div>
   );
 };
