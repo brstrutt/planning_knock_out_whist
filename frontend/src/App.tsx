@@ -4,7 +4,7 @@ import './App.css';
 const App = () => {
   const apiResponse = useQuery({
     queryKey: ['theOnlyApi'],
-    queryFn: () => async () => (await fetch("http://localhost:8080/api/hellow_world")).json()
+    queryFn: () => async () => (await fetch("http://localhost:3000/api/hey"))
   });
 
   return (

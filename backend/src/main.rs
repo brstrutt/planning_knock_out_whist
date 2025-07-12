@@ -28,7 +28,7 @@ async fn main() -> std::io::Result<()> {
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(Files::new("/", "./public").index_file("index.html").prefer_utf8(true))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }

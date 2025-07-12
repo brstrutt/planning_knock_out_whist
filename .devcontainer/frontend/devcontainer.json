@@ -2,16 +2,15 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/rust
 {
 	"name": "Frontend Devcontainer (Typescript)",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
-	"postCreateCommand": "npm install",
-  	"workspaceFolder": "/workspaces/planning_knock_out_wist/frontend",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/planning_knock_out_wist,type=bind,consistency=cached",
+	"dockerComposeFile": "../docker-compose.yaml",
+	"service": "frontend",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"fill-labs.dependi"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "npm install",
+  	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/frontend"
 }

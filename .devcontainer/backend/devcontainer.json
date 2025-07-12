@@ -2,8 +2,8 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/rust
 {
 	"name": "Backend Devcontainer (Rust)",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye",
+	"dockerComposeFile": "../docker-compose.yaml",
+	"service": "backend",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -12,6 +12,5 @@
 		}
 	},
 	"postCreateCommand": "cargo install cargo-watch",
-  	"workspaceFolder": "/workspaces/planning_knock_out_wist/backend",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/planning_knock_out_wist,type=bind,consistency=cached"
+  	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/backend"
 }
