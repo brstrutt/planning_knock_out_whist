@@ -1,0 +1,33 @@
+name: Build and Publish
+on:
+  push: 
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      # Allow running workflow manually
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v4
+      
+      - name: Build the frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+      
+      - name: Build the backend docker container and push it to github container registry
+        run: |
+          cd backend
+          docker build ../deployment --tag ghcr.io/brstrutt/planning_knock_out_whist:latest
+          docker push ghcr.io/brstrutt/planning_knock_out_whist:latest
+
+
