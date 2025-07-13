@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import './App.css';
 
 const App = () => {
@@ -12,6 +12,9 @@ const App = () => {
       '/api/hey',
       {
         method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({text: newText})
       }
     )),
