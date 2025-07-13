@@ -27,7 +27,7 @@ jobs:
       - name: Build the backend docker container and push it to github container registry
         run: |
           cd backend
-          docker build ../deployment --tag ghcr.io/brstrutt/planning_knock_out_whist:latest
+          docker build -f deployment/dockerfile --tag ghcr.io/brstrutt/planning_knock_out_whist:latest .
           docker push ghcr.io/brstrutt/planning_knock_out_whist:latest
 
 
