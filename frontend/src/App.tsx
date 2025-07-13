@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import './App.css';
+import { useRef } from 'react';
 
 const App = () => {
   const getData = useQuery({
@@ -21,6 +22,8 @@ const App = () => {
     onSuccess: () => getData.refetch()
   });
 
+  const messageInput = useRef<HTMLInputElement>(null);
+
   return (
     <div>
       <h1>Testing the API!</h1>
@@ -33,9 +36,9 @@ const App = () => {
       {
         getData.status === 'success' && <p>Data: {getData.data.text}</p>
       }
-
-      <button onClick={() => setData.mutate('NEW TEXT')}>
-        CLICK ME
+      <input ref={messageInput}/>
+      <button onClick={() => setData.mutate(messageInput.current?.value ?? 'Error: could not find input element')}>
+        Update Message
       </button>
     </div>
   );
