@@ -3,6 +3,12 @@ import { pluginReact } from '@rsbuild/plugin-react';
 
 export default defineConfig({
   plugins: [pluginReact()],
+  output: {
+    distPath: {
+      root: '../backend/public',  // Adjust path as needed
+    },
+    cleanDistPath: true,
+  },
   server: {
     proxy: {
       '/api': {
