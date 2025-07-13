@@ -12,5 +12,6 @@ Like a frontend would.
 
 ## How to develop
 
-- Open the frontend devcontainer defined in the parent's `.devcontainer` directory. This contains the development environment.
-- Run `npm run dev` to start the frontend dev server. This will host the webpage during development. It will automatically recompile and refresh the page when you change the code
+1. Open the frontend devcontainer. This contains the dev environment
+2. Run `npm run dev` to start the dev server
+3. Run `npm run build` to update the backend with the latest build

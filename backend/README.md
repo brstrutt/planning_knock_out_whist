@@ -12,11 +12,7 @@ This service is intended to serve the web frontend, and to provide an API that t
 
 ## How to develop
 
-- Open the Rust devcontainer devined in the parent's `.devcontainer` directory. This contains the development environment.
-- Run `cargo watch -x run` to start the backend service. It will automatically recompile and restart when you change the code
-
-## How to deploy
-
-TODO: Figure out how to deploy. It'll probably use github actions.
-
-
+1. Open the backend devcontainer. This contains the dev environment
+2. (initial setup) follow the [frontend readme](../frontend/README.md) to create an initial build of the frontend
+3. Run `cargo run` to run the backend server
+4. Run `cargo watch -x run` to run the backend server with automatic recompilation on code changes
