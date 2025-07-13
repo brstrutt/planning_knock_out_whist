@@ -16,3 +16,8 @@ This service is intended to serve the web frontend, and to provide an API that t
 2. (initial setup) follow the [frontend readme](../frontend/README.md) to create an initial build of the frontend
 3. Run `cargo run` to run the backend server
 4. Run `cargo watch -x run` to run the backend server with automatic recompilation on code changes
+
+## Other
+
+Might be nice to auto-generate API documentation from the source code itself.
+[This article](https://medium.com/netwo/documenting-api-for-actix-web-b575adb841a1) suggests a potentially nice way of doing it, using the `apistos` and `schemars` crates.
