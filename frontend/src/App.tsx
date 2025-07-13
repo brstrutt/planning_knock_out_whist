@@ -31,10 +31,7 @@ const App = () => {
       <input ref={messageInput} />
       <button
         onClick={() =>
-          setData.mutate(
-            messageInput.current?.value ??
-              'Error: could not find input element',
-          )
+          setData.mutate(messageInput.current?.value ?? 'Error: could not find input element')
         }
       >
         Update Message
