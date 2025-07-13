@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [pluginReact()],
   output: {
     distPath: {
-      root: '../backend/public',  // Adjust path as needed
+      root: '../backend/public', // Adjust path as needed
     },
     cleanDistPath: true,
   },
@@ -14,8 +14,8 @@ export default defineConfig({
       '/api': {
         target: 'http://backend:8080',
         changeOrigin: true,
-				secure: false,
-      }
+        secure: false,
+      },
     },
   },
 });
