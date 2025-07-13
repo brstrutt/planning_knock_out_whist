@@ -15,3 +15,9 @@ In order to develop this repo there are two devcontainers, one for frontend one 
 To run the full application you currently need to open both devcontainers simultaneously.
 Run the backend service in one, then run the frontend dev server in the other.
 
+## TODO:
+
+- Add a second Frontend devcontainer that spins up the latest production backend docker container automatically on start. This is to make it easier to update JUST the frontend without needing to manually start the backend
+- Figure out how to make modifying the fullstack environment easier. Currently you need to open a THIRD VSCode window in order to see and update the devctonainers/global readme, because the devcontainers pretend they can't see the root folder
+- Figure out how to deploy this thing and make it do the do automatically
+
