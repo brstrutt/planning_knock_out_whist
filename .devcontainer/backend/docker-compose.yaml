@@ -1,5 +1,3 @@
-version: '3'
-
 networks:
   shared:
     name: shared_dev_planning_knock_out_whist
