@@ -1,0 +1,25 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
+{
+	"name": "Fullstack devcontainer",
+	"dockerComposeFile": "docker-compose.yaml",
+	"service": "backend",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/typescript:2": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"fill-labs.dependi",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode"
+			],
+			"settings": {
+				"editor.formatOnSave": true,
+				"editor.defaultFormatter": "vscode.esbenp.prettier-vscode"
+			}
+		}
+	},
+	"postCreateCommand": "cd backend; cargo install cargo-watch; cd ../frontend; npm install;",
+  	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+}

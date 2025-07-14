@@ -1,0 +1,12 @@
+networks:
+  shared:
+    name: shared_dev_planning_knock_out_whist
+
+services:
+  backend:
+    image: mcr.microsoft.com/devcontainers/rust:1-1-bullseye
+    volumes:
+      - ../..:/workspaces/planning_knock_out_whist:cached
+    networks:
+      - shared
+    command: sleep infinity
