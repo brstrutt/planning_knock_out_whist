@@ -1,9 +1,11 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/rust
 {
-	"name": "Frontend Devcontainer (Typescript)",
-	"dockerComposeFile": "docker-compose.yaml",
-	"service": "frontend",
+	"name": "Devcontainer",
+	"image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/typescript:2": {}
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -17,6 +19,5 @@
 			}
 		}
 	},
-	"postCreateCommand": "npm install",
-  	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/frontend"
+	"postCreateCommand": "cd backend; cargo install cargo-watch; cd ../frontend; npm install; npm run build;"
 }

@@ -9,13 +9,8 @@ export default defineConfig({
     },
     cleanDistPath: true,
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://backend:8080',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+  html: {
+    title: 'Planning KNOCK OUT WHIST',
+    favicon: './src/assets/favicon.ico',
   },
 });
