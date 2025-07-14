@@ -27,7 +27,7 @@ const App = () => {
       <h1>Testing the API!</h1>
       {getData.status === 'error' && <p>Oh NOOOO! an ERRROR!</p>}
       {getData.status === 'pending' && <p>Loading...</p>}
-      {getData.status === 'success' && <p>Data: {getData.data.text}</p>}
+      {getData.status === 'success' && <p>Persistent Message: {getData.data.text}</p>}
       <input ref={messageInput} />
       <button
         onClick={() =>
