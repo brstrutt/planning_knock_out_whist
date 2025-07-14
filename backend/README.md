@@ -12,10 +12,9 @@ This service is intended to serve the web frontend, and to provide an API that t
 
 ## How to develop
 
-1. Open the backend devcontainer. This contains the dev environment
-2. (initial setup) follow the [frontend readme](../frontend/README.md) to create an initial build of the frontend
-3. Run `cargo run` to run the backend server
-4. Run `cargo watch -x run` to run the backend server with automatic recompilation on code changes
+0. Open the devcontainer and cd to this directory. Then the following commands will work.
+1. Run `cargo run` to run the backend server
+2. Run `cargo watch -x run` to run the backend server with automatic recompilation on code changes
 
 ## Other
 

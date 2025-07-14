@@ -12,6 +12,6 @@ Like a frontend would.
 
 ## How to develop
 
-1. Open the frontend devcontainer. This contains the dev environment
-2. Run `npm run dev` to start the dev server
-3. Run `npm run build` to update the backend with the latest build
+0. Open the devcontainer and cd to this directory. Then the following commands will work.
+1. Run `npm run dev` to start the dev server
+2. Run `npm run build` to update the backend with the latest build
