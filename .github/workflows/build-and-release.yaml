@@ -34,11 +34,19 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build and push the deployment docker container
+        id: push
         uses: docker/build-push-action@v6.18.0
         with:
          context: .
          file: deployment/dockerfile
          push: true
          tags: ghcr.io/${{ github.repository }}:latest
+
+      - name: Deploy to Digital Ocean
+        uses: digitalocean/app_action/deploy@v2
+        env:
+          SAMPLE_DIGEST: ${{ steps.push.outputs.digest }}
+        with:
+          token: ${{ secrets.YOUR_DIGITALOCEAN_ACCESS_TOKEN_VARIABLE_NAME }}
 
 
