@@ -33,12 +33,12 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Build the backend docker container and push it to github container registry
-        run: |
-          echo Testing
-          echo ${{ github.repository }}
-          echo Testing
-          docker build -f deployment/dockerfile --tag ghcr.io/brstrutt/planning_knock_out_whist:latest .
-          docker push ghcr.io/brstrutt/planning_knock_out_whist:latest
+      - name: Build and push the deployment docker container
+        uses: docker/build-push-action@v6.18.0
+        with:
+         context: .
+         file: deployment/dockerfile
+         push: true
+         tags: ghcr.io/${{ github.repository }}:latest
 
 
