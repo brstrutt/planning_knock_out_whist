@@ -13,4 +13,13 @@ export default defineConfig({
     title: 'Planning KNOCK OUT WHIST',
     favicon: './src/assets/favicon.ico',
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
