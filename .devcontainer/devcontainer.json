@@ -15,7 +15,7 @@
 			],
 			"settings": {
 				"editor.formatOnSave": true,
-				"editor.defaultFormatter": "vscode.esbenp.prettier-vscode"
+				"editor.defaultFormatter": "esbenp.prettier-vscode"
 			}
 		}
 	},

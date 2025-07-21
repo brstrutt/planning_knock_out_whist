@@ -24,7 +24,7 @@ const App = () => {
 
   const submit = useCallback(
     () => setData.mutate(messageInput.current?.value ?? 'Error: could not find input element'),
-    [],
+    [setData],
   );
 
   return (
