@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import './App.css';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
   const getData = useQuery({
@@ -18,6 +19,18 @@ const App = () => {
         body: JSON.stringify({ text: newText }),
       }),
     onSuccess: () => getData.refetch(),
+  });
+
+  const session_uuid = useMemo(() => uuidv4(), []);
+  const session = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => await fetch('/api/connect', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session_uuid }),
+    }),
   });
 
   const messageInput = useRef<HTMLInputElement>(null);
@@ -39,6 +52,7 @@ const App = () => {
         <input ref={messageInput} />
         <input type='button' value='submit' onClick={submit} />
       </form>
+      <div>{JSON.stringify(session.data)}</div>
     </div>
   );
 };
