@@ -1,42 +1,14 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
 import './App.css';
 import { useCallback, useMemo, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import * as api from './api';
 
 const App = () => {
-  const getData = useQuery({
-    queryKey: ['theOnlyApi'],
-    queryFn: async () => (await fetch('/api/hey')).json(),
-  });
-
-  const setData = useMutation({
-    mutationFn: async (newText: string) =>
-      await fetch('/api/hey', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: newText }),
-      }),
-    onSuccess: () => getData.refetch(),
-  });
+  const getData = api.hey.useGet();
+  const setData = api.hey.usePost();
 
   const session_uuid = useMemo(() => uuidv4(), []);
-  const session = useQuery({
-    queryKey: ['session'],
-    queryFn: async () => (
-      await fetch(
-        '/api/connect',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ session_uuid }),
-        }
-      )
-    ).json(),
-  });
+  const session = api.connect.usePost(session_uuid);
 
   const messageInput = useRef<HTMLInputElement>(null);
 
