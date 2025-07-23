@@ -4,9 +4,20 @@ import { v4 as uuidv4 } from 'uuid';
 import * as api from './api';
 
 const App = () => {
+  const session_uuid = useMemo(
+    () => {
+      const current_session_uuid = sessionStorage.getItem('pkow_session_uuid');
+      if (current_session_uuid !== null) return current_session_uuid;
+
+      const new_uuid = uuidv4();
+      sessionStorage.setItem('pkow_session_uuid', new_uuid);
+      return new_uuid;
+    },
+    []
+  );
+
   const getData = api.hey.useGet();
 
-  const session_uuid = useMemo(() => uuidv4(), []);
   const session = api.session.useConnect(session_uuid);
   const allSessions = api.session.useList();
   const setName = api.session.useSetName();
