@@ -37,3 +37,13 @@ Github Actions will:
 - deploy it to digital ocean
 
 To run the release build locally, run `docker run -p 8080:8080 ghcr.io/brstrutt/planning_knock_out_whist:latest`. Then you can visit `localhost:8080` in the browser to access the frontend.
+
+## Todo:
+
+(just some tasks I should do. These probably belong on some kind of kanban board but I'm gonna put them here instead because it's easier)
+
+- [ ] Add clearer "Join the room" screen when a user first loads the website
+- [ ] Make the backend regularly clear out old sessions
+- [ ] Let users change their own name
+- [ ] Figure out how to stop sending the session uuid in the sessions list
+- [ ] think more about the API structure. It is currently shit.
