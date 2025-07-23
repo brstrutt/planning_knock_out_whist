@@ -1,0 +1,13 @@
+.Sessions {
+  display: flex;
+}
+
+.Sessions .session {
+  padding: 10px;
+  margin: 2px;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  justify-content: center;
+  background-color: beige;
+}

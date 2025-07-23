@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
-enum ConnectResponseType {
-  SessionRestored,
-  SessionCreated,
-  TooManySessions,
+export enum ConnectResponseType {
+  SessionRestored = 'SessionRestored',
+  SessionCreated = 'SessionCreated',
+  TooManySessions = 'TooManySessions',
 }
 
 type ConnectResponse = {
@@ -48,7 +48,7 @@ export function useSetName() {
   });
 }
 
-type Session = {
+export type Session = {
   uuid: string;
   name: string;
 };
