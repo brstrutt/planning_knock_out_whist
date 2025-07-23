@@ -1,4 +1,4 @@
-use actix_web::{get, post, web};
+use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use crate::state::{AppState, Session};
@@ -44,6 +44,25 @@ pub async fn create_session(req_body: web::Json<ConnectRequest>, data: web::Data
     web::Json(CreateResponse {
         session_status: CreateResponseType::SessionCreated,
     })
+}
+
+
+#[derive(Deserialize)]
+struct SetNameRequest {
+    session_uuid: String,
+    name: String,
+}
+
+#[post("/set_name")]
+pub async fn set_name(req_body: web::Json<SetNameRequest>, data: web::Data<AppState>) -> impl Responder {
+    let session_uuid = req_body.session_uuid.clone();
+    let mut current_sessions = data.sessions.lock().unwrap();
+
+    if let Some(session) = current_sessions.iter_mut().find(|session| session.uuid == session_uuid) {
+        *session = Session{uuid: session_uuid, name: Some(req_body.name.clone())};
+    }
+
+    HttpResponse::Ok()
 }
 
 
