@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 use serde::{Deserialize, Serialize};
 
 use crate::state::{AppState, Session};
@@ -9,39 +9,60 @@ struct ConnectRequest {
 }
 
 #[derive(Serialize)]
-enum ResponseType {
+enum CreateResponseType {
     SessionRestored,
     SessionCreated,
     TooManySessions
 }
 
 #[derive(Serialize)]
-struct ConnectResponse {
-    session_status: ResponseType
+struct CreateResponse {
+    session_status: CreateResponseType
 }
 
 const MAX_SESSIONS: usize = 20;
 
 #[post("/connect")]
-pub async fn post_connect(req_body: web::Json<ConnectRequest>, data: web::Data<AppState>) -> web::Json<ConnectResponse> {
+pub async fn create_session(req_body: web::Json<ConnectRequest>, data: web::Data<AppState>) -> web::Json<CreateResponse> {
     let session_uuid = req_body.session_uuid.clone();
     let mut current_sessions = data.sessions.lock().unwrap();
 
     let session_already_active = current_sessions.iter().any(|session| session.uuid == session_uuid);
     if session_already_active {
-        return web::Json(ConnectResponse {
-            session_status: ResponseType::SessionRestored,
+        return web::Json(CreateResponse {
+            session_status: CreateResponseType::SessionRestored,
         })
     }
 
     if current_sessions.len() >= MAX_SESSIONS {
-        return web::Json(ConnectResponse {
-            session_status: ResponseType::TooManySessions,
+        return web::Json(CreateResponse {
+            session_status: CreateResponseType::TooManySessions,
         })
     }
 
     current_sessions.push(Session{uuid: session_uuid});
-    web::Json(ConnectResponse {
-        session_status: ResponseType::SessionCreated,
+    web::Json(CreateResponse {
+        session_status: CreateResponseType::SessionCreated,
+    })
+}
+
+
+#[derive(Serialize)]
+struct GetResponse {
+    uuid: String,
+}
+
+#[derive(Serialize)]
+struct ListResponse {
+    sessions: Vec<GetResponse>
+}
+
+#[get("/sessions")]
+pub async fn list_sessions(data: web::Data<AppState>) -> web::Json<ListResponse> {
+    let current_sessions = data.sessions.lock().unwrap();
+    let sessions = current_sessions.iter().map(|session| GetResponse {uuid: session.uuid.clone()}).collect();
+
+    web::Json(ListResponse {
+        sessions,
     })
 }

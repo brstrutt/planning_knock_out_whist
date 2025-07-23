@@ -26,7 +26,8 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/api")
                 .service(api::hey::get_hey)
                 .service(api::hey::post_hey)
-                .service(api::session::post_connect)
+                .service(api::session::create_session)
+                .service(api::session::list_sessions)
             )
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(
