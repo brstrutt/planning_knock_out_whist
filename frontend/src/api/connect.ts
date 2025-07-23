@@ -1,8 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-export function usePost(session_uuid: string) {
+enum ResponseType {
+  SessionRestored,
+  SessionCreated,
+  TooManySessions,
+}
+
+type Response = {
+  session_status: ResponseType;
+};
+
+const queryKey = ['session'];
+
+export function usePost(session_uuid: string): UseQueryResult<Response> {
   return useQuery({
-    queryKey: ['session'],
+    queryKey,
     queryFn: async () =>
       (
         await fetch('/api/connect', {
@@ -12,6 +24,6 @@ export function usePost(session_uuid: string) {
           },
           body: JSON.stringify({ session_uuid }),
         })
-      ).json(),
+      ).json() as Promise<Response>,
   });
 }

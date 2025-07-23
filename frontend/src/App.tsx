@@ -29,7 +29,7 @@ const App = () => {
         <input ref={messageInput} />
         <input type='button' value='submit' onClick={submit} />
       </form>
-      <div>{JSON.stringify(session.data)}</div>
+      <div>{session.data?.session_status} for uuid {session_uuid}</div>
     </div>
   );
 };
