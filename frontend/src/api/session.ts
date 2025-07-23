@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 enum ConnectResponseType {
   SessionRestored,
@@ -12,8 +12,8 @@ type ConnectResponse = {
 
 const queryKey = ['session'];
 
-export function useConnect(session_uuid: string): UseQueryResult<ConnectResponse> {
-  return useQuery({
+export function useConnect(session_uuid: string): ConnectResponse {
+  return useSuspenseQuery({
     queryKey: [...queryKey, 'connect'],
     queryFn: async () =>
       (
@@ -25,7 +25,7 @@ export function useConnect(session_uuid: string): UseQueryResult<ConnectResponse
           body: JSON.stringify({ session_uuid }),
         })
       ).json() as Promise<ConnectResponse>,
-  });
+  }).data;
 }
 
 type SetNameRequest = {
@@ -57,9 +57,9 @@ type ListResponse = {
   sessions: Session[];
 };
 
-export function useList(): UseQueryResult<ListResponse> {
-  return useQuery({
+export function useList(): ListResponse {
+  return useSuspenseQuery({
     queryKey: [...queryKey, 'list'],
     queryFn: async () => (await fetch('/api/sessions')).json() as Promise<ListResponse>,
-  });
+  }).data;
 }

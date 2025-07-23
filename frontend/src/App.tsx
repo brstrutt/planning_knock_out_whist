@@ -39,11 +39,9 @@ function Header(): JSX.Element {
 
 function PersistentMessage(): JSX.Element {
   const getData = api.hey.useGet();
-  return <>
-    {getData.status === 'error' && <p>Oh NOOOO! an ERRROR!</p>}
-    {getData.status === 'pending' && <p>Loading...</p>}
-    {getData.status === 'success' && <p>Persistent Message: {getData.data.text}</p>}
-  </>;
+  return (
+    <p>Persistent Message: {getData.text}</p>
+  );
 }
 
 function NameInputField(props: { session_uuid: string }): JSX.Element {

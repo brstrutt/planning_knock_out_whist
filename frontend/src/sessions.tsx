@@ -6,7 +6,7 @@ export function Sessions(): JSX.Element {
 
     return <>
         {
-            allSessions.data?.sessions.map(
+            allSessions.sessions.map(
                 session => <div key={session.uuid}>Session: {session.name}</div>
             )
         }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 type Response = {
   text: string;
@@ -6,11 +6,11 @@ type Response = {
 
 const queryKey = ['hey'];
 
-export function useGet(): UseQueryResult<Response> {
-  return useQuery({
+export function useGet(): Response {
+  return useSuspenseQuery({
     queryKey,
     queryFn: async () => (await fetch('/api/hey')).json() as Promise<Response>,
-  });
+  }).data;
 }
 
 export function usePost() {
