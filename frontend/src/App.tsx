@@ -5,17 +5,17 @@ import * as api from './api';
 
 const App = () => {
   const getData = api.hey.useGet();
-  const setData = api.hey.usePost();
 
   const session_uuid = useMemo(() => uuidv4(), []);
   const session = api.session.useConnect(session_uuid);
   const allSessions = api.session.useList();
+  const setName = api.session.useSetName();
 
   const messageInput = useRef<HTMLInputElement>(null);
 
   const submit = useCallback(
-    () => setData.mutate(messageInput.current?.value ?? 'Error: could not find input element'),
-    [setData],
+    () => setName.mutate({ session_uuid: session_uuid, name: messageInput.current?.value ?? 'Error: could not find input element' }),
+    [session_uuid, setName],
   );
 
   return (
@@ -33,7 +33,7 @@ const App = () => {
       <div>{session.data?.session_status} for uuid {session_uuid}</div>
       {
         allSessions.data?.sessions.map(
-          session => <div key={session_uuid}>Session: {session.uuid}</div>
+          session => <div key={session_uuid}>Session: {session.name}</div>
         )
       }
     </div>

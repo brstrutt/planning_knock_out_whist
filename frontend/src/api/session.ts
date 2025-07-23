@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
 
 enum ConnectResponseType {
   SessionRestored,
@@ -28,8 +28,29 @@ export function useConnect(session_uuid: string): UseQueryResult<ConnectResponse
   });
 }
 
+type SetNameRequest = {
+  session_uuid: string;
+  name: string;
+};
+
+export function useSetName() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (request: SetNameRequest) =>
+      await fetch('/api/set_name', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [...queryKey, 'list'] }),
+  });
+}
+
 type Session = {
   uuid: string;
+  name: string;
 };
 
 type ListResponse = {
