@@ -4,7 +4,7 @@ type Response = {
   text: string;
 };
 
-const queryKey = ['theOnlyApi'];
+const queryKey = ['hey'];
 
 export function useGet(): UseQueryResult<Response> {
   return useQuery({

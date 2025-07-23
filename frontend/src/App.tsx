@@ -8,7 +8,8 @@ const App = () => {
   const setData = api.hey.usePost();
 
   const session_uuid = useMemo(() => uuidv4(), []);
-  const session = api.connect.usePost(session_uuid);
+  const session = api.session.useConnect(session_uuid);
+  const allSessions = api.session.useList();
 
   const messageInput = useRef<HTMLInputElement>(null);
 
@@ -30,6 +31,11 @@ const App = () => {
         <input type='button' value='submit' onClick={submit} />
       </form>
       <div>{session.data?.session_status} for uuid {session_uuid}</div>
+      {
+        allSessions.data?.sessions.map(
+          session => <div key={session_uuid}>Session: {session.uuid}</div>
+        )
+      }
     </div>
   );
 };

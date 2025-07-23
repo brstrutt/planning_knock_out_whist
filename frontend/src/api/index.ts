@@ -1,2 +1,2 @@
-export * as connect from './connect';
+export * as session from './session';
 export * as hey from './hey';
