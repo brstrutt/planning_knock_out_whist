@@ -24,13 +24,18 @@ const App = () => {
   const session_uuid = useMemo(() => uuidv4(), []);
   const session = useQuery({
     queryKey: ['session'],
-    queryFn: async () => await fetch('/api/connect', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ session_uuid }),
-    }),
+    queryFn: async () => (
+      await fetch(
+        '/api/connect',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ session_uuid }),
+        }
+      )
+    ).json(),
   });
 
   const messageInput = useRef<HTMLInputElement>(null);
