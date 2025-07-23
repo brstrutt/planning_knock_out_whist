@@ -40,7 +40,7 @@ pub async fn create_session(req_body: web::Json<ConnectRequest>, data: web::Data
         })
     }
 
-    current_sessions.push(Session{uuid: session_uuid});
+    current_sessions.push(Session{uuid: session_uuid, name: None});
     web::Json(CreateResponse {
         session_status: CreateResponseType::SessionCreated,
     })
@@ -50,6 +50,7 @@ pub async fn create_session(req_body: web::Json<ConnectRequest>, data: web::Data
 #[derive(Serialize)]
 struct GetResponse {
     uuid: String,
+    name: String,
 }
 
 #[derive(Serialize)]
@@ -60,7 +61,10 @@ struct ListResponse {
 #[get("/sessions")]
 pub async fn list_sessions(data: web::Data<AppState>) -> web::Json<ListResponse> {
     let current_sessions = data.sessions.lock().unwrap();
-    let sessions = current_sessions.iter().map(|session| GetResponse {uuid: session.uuid.clone()}).collect();
+    let sessions = current_sessions
+        .iter()
+        .filter(|session| session.name.is_some())
+        .map(|session| GetResponse {uuid: session.uuid.clone(), name: session.name.clone().unwrap()}).collect();
 
     web::Json(ListResponse {
         sessions,
