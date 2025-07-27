@@ -11,8 +11,21 @@ struct User {
 }
 
 #[get("/users/{id}")]
-pub async fn get() -> impl Responder {
-    HttpResponse::NotImplemented()
+pub async fn get(path: web::Path<(u32,)>, data: web::Data<AppState>) -> impl Responder {
+    let id = path.into_inner().0;
+    let users = data.sessions.lock().unwrap();
+    let user = users.iter().find(|user| user.id == id);
+
+    match user {
+        None => HttpResponse::NotFound().body("User not found with the specified ID"),
+        Some(user) => HttpResponse::Ok().json(User {
+            id: user.id.to_string(),
+            name: user
+                .name
+                .clone()
+                .unwrap_or(format!("Unknown User {}", user.id)),
+        }),
+    }
 }
 
 // LIST
