@@ -1,4 +1,4 @@
-use actix_web::{Responder, Result, get, web};
+use actix_web::{HttpResponse, Responder, get, post, put, web};
 use serde::{Deserialize, Serialize};
 
 use crate::state::AppState;
@@ -10,9 +10,14 @@ struct User {
     name: String,
 }
 
+#[get("/users/{id}")]
+pub async fn get() -> impl Responder {
+    HttpResponse::NotImplemented()
+}
+
 // LIST
 #[get("/users")]
-pub async fn list(data: web::Data<AppState>) -> Result<impl Responder> {
+pub async fn list(data: web::Data<AppState>) -> impl Responder {
     let current_sessions = data.sessions.lock().unwrap();
     let users: Vec<User> = current_sessions
         .iter()
@@ -25,12 +30,20 @@ pub async fn list(data: web::Data<AppState>) -> Result<impl Responder> {
         })
         .collect();
 
-    Ok(web::Json(users))
+    web::Json(users)
 }
 
 // CREATE
+#[post("/users")]
+pub async fn create() -> impl Responder {
+    HttpResponse::NotImplemented()
+}
+
 // UPDATE
-// DELETE
+#[put("/users/{id}")]
+pub async fn update() -> impl Responder {
+    HttpResponse::NotImplemented()
+}
 
 #[cfg(test)]
 mod tests {
