@@ -1,10 +1,17 @@
-use actix_web::{HttpResponse, Responder, get};
+use actix_web::{Responder, Result, get, web};
+use serde::{Deserialize, Serialize};
 
 // GET
+#[derive(Serialize, Deserialize)]
+struct User {
+    id: String,
+    name: String,
+}
+
 // LIST
 #[get("/users")]
-pub async fn list() -> impl Responder {
-    HttpResponse::Ok()
+pub async fn list() -> Result<impl Responder> {
+    Ok(web::Json(Vec::<User>::new()))
 }
 
 // CREATE
@@ -29,10 +36,9 @@ mod tests {
         let req = test::TestRequest::get().uri("/users").to_request();
 
         // // Call the API
-        let resp = test::call_service(&app, req).await;
+        let resp: Vec<super::User> = test::call_and_read_body_json(&app, req).await;
 
         // Check the response
-        print!("Status code: {}", resp.status());
-        assert!(resp.status().is_success());
+        assert_eq!(resp.len(), 0);
     }
 }
