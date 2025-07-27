@@ -49,7 +49,6 @@ pub async fn update() -> impl Responder {
 mod tests {
     use crate::state::{AppState, Session};
     use actix_web::{App, test, web};
-    use std::sync::Mutex;
 
     use super::*;
 
@@ -112,9 +111,47 @@ mod tests {
     }
 
     mod get {
-        // Test a valid user ID produces the correct user data
-        // Test a non-existant user ID produces a 404 error
-        // Test an invalid user Id produces a 404 error
+        use super::*;
+
+        #[actix_web::test]
+        async fn get_missing_user() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::get)).await;
+
+            // Test missing ID returns 404
+            let req = test::TestRequest::get().uri("/users/1337").to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), 404);
+
+            // Test invalid ID returns 404
+            let req = test::TestRequest::get()
+                .uri("/users/im_not_valid")
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), 404);
+        }
+
+        #[actix_web::test]
+        async fn get_user() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("123-456-789"),
+                id: 254,
+                name: Some(String::from("A very real name")),
+            });
+
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::get)).await;
+
+            // Test the user gets returned
+            let req = test::TestRequest::get().uri("/users/254").to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "254");
+            assert_eq!(resp.name, "A very real name");
+        }
     }
 
     mod create {
