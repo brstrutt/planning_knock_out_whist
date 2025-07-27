@@ -63,9 +63,9 @@ mod tests {
             let app =
                 test::init_service(App::new().app_data(app_data.clone()).service(super::list))
                     .await;
-            let req = test::TestRequest::get().uri("/users").to_request();
 
-            // // Call the API
+            // Call the API
+            let req = test::TestRequest::get().uri("/users").to_request();
             let resp: Vec<super::User> = test::call_and_read_body_json(&app, req).await;
 
             // Check the response
@@ -95,9 +95,9 @@ mod tests {
             let app =
                 test::init_service(App::new().app_data(app_data.clone()).service(super::list))
                     .await;
-            let req = test::TestRequest::get().uri("/users").to_request();
 
-            // // Call the API
+            // Call the API
+            let req = test::TestRequest::get().uri("/users").to_request();
             let resp: Vec<super::User> = test::call_and_read_body_json(&app, req).await;
 
             // Check the response
