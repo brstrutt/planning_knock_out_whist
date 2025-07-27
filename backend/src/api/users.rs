@@ -155,11 +155,123 @@ mod tests {
     }
 
     mod create {
-        // Test a missing UUID returns a bad_request error
-        // Test a valid UUID returns the expected new user and that user is persisted
+        use actix_web::http::{StatusCode, header::ContentType};
+
+        use super::*;
+
+        #[actix_web::test]
+        async fn create_user_incorrectly() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::create))
+                    .await;
+
+            // Test missing body returns bad_request
+            let req = test::TestRequest::post().uri("/users").to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+
+            // Test missing UUID in body returns bad_request
+            let req = test::TestRequest::post()
+                .uri("/users")
+                .set_payload(r#"{"name": "Pinnochio"}"#)
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+        }
+
+        #[actix_web::test]
+        async fn create_user() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::create))
+                    .await;
+
+            // Test providing UUID creates user successfully with default name
+            let req = test::TestRequest::post()
+                .uri("/users")
+                .insert_header(ContentType::json())
+                .set_payload(
+                    r#"{
+                        "uuid": "my-definitely-unique-id"
+                    }"#,
+                )
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "1");
+            assert_eq!(resp.name, "Unknown User 1");
+
+            // Test providing UUID AND name creates user successfully with specified name
+            let req = test::TestRequest::post()
+                .uri("/users")
+                .insert_header(ContentType::json())
+                .set_payload(
+                    r#"{
+                        "uuid": "a-second-definitely-unique-id",
+                        "name": "Pinnochio"
+                    }"#,
+                )
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "2");
+            assert_eq!(resp.name, "Pinnochio");
+        }
+
+        #[actix_web::test]
+        async fn create_user_with_already_in_use_uuid() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("i-am-not-unique"),
+                id: 123,
+                name: Some(String::from("Benjo the Banjo")),
+            });
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::create))
+                    .await;
+
+            // Test reusing UUID simply returns the already existing User
+            let req = test::TestRequest::post()
+                .uri("/users")
+                .insert_header(ContentType::json())
+                .set_payload(
+                    r#"{
+                        "uuid": "i-am-not-unique"
+                    }"#,
+                )
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "123");
+            assert_eq!(resp.id, "Benjo the Banjo");
+            assert_eq!(app_data.sessions.lock().unwrap().len(), 1);
+
+            // Test reusing ID and providing name returns the already existing user with the new name
+            let req = test::TestRequest::post()
+                .uri("/users")
+                .insert_header(ContentType::json())
+                .set_payload(
+                    r#"{
+                        "uuid": "i-am-not-unique",
+                        "name": "Pinnochio"
+                    }"#,
+                )
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "123");
+            assert_eq!(resp.id, "Pinnochio");
+            assert_eq!(app_data.sessions.lock().unwrap().len(), 1);
+        }
+
+        // TODO: Test the ID sequence generates correctly
+        // TODO: Test the function returns 201 not 200 on success
+        // TODO: Test the ID sequence works even if there are gaps in the sequence
+        // TODO: Test the ID sequence works even if the last few entries have been removed (eg if Id 5 is added, then removed, the next addition should be Id 6 not Id 5 again)
     }
 
     mod update {
+        use super::*;
         // Test a missing UUID returns a bad_request error
         // Test a UUID that doesn't match the modified user returns a forbidden error
         // Test modifying a non-existant user returns 404
