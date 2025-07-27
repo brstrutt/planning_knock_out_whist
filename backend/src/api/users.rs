@@ -17,8 +17,11 @@ pub async fn list(data: web::Data<AppState>) -> Result<impl Responder> {
     let users: Vec<User> = current_sessions
         .iter()
         .map(|session| User {
-            id: session.uuid.clone(),
-            name: session.name.clone().unwrap_or(session.uuid.clone()),
+            id: session.id.clone().to_string(),
+            name: session
+                .name
+                .clone()
+                .unwrap_or(format!("Unknown User {}", session.id.clone())),
         })
         .collect();
 
@@ -61,14 +64,17 @@ mod tests {
             sessions: Mutex::new(vec![
                 Session {
                     uuid: String::from("1"),
+                    id: 1,
                     name: Some(String::from("testing")),
                 },
                 Session {
                     uuid: String::from("several"),
+                    id: 2,
                     name: None,
                 },
                 Session {
                     uuid: String::from("Third"),
+                    id: 3,
                     name: Some(String::from("manymanymanyword long name here")),
                 },
             ]),
@@ -84,9 +90,9 @@ mod tests {
         assert_eq!(resp.len(), 3);
         assert_eq!(resp[0].id, "1");
         assert_eq!(resp[0].name, "testing");
-        assert_eq!(resp[1].id, "several");
-        assert_eq!(resp[1].name, "several");
-        assert_eq!(resp[2].id, "Third");
+        assert_eq!(resp[1].id, "2");
+        assert_eq!(resp[1].name, "Unknown User 2");
+        assert_eq!(resp[2].id, "3");
         assert_eq!(resp[2].name, "manymanymanyword long name here");
     }
 }
