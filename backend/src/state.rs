@@ -10,3 +10,12 @@ pub struct AppState {
     pub message: Mutex<String>,
     pub sessions: Mutex<Vec<Session>>,
 }
+
+impl AppState {
+    pub fn default() -> Self {
+        AppState {
+            message: Mutex::new(String::from("no message")),
+            sessions: Mutex::new(Vec::new()),
+        }
+    }
+}

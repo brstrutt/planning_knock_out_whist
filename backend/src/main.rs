@@ -1,21 +1,16 @@
-use std::sync::Mutex;
-
 use actix_files::Files;
-use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
+use actix_web::{App, HttpServer, web};
 use env_logger::Env;
 
-mod state;
 mod api;
+mod state;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    let data = web::Data::new(state::AppState {
-        message: Mutex::new(String::from("no message")),
-        sessions: Mutex::new(Vec::new()),
-    });
+    let data = web::Data::new(state::AppState::default());
 
     HttpServer::new(move || {
         App::new()
@@ -24,12 +19,12 @@ async fn main() -> std::io::Result<()> {
             .app_data(data.clone())
             .service(
                 web::scope("/api")
-                .service(api::hey::get_hey)
-                .service(api::hey::post_hey)
-                .service(api::session::create_session)
-                .service(api::session::list_sessions)
-                .service(api::session::set_name)
-                .service(api::users::list)
+                    .service(api::hey::get_hey)
+                    .service(api::hey::post_hey)
+                    .service(api::session::create_session)
+                    .service(api::session::list_sessions)
+                    .service(api::session::set_name)
+                    .service(api::users::list),
             )
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(

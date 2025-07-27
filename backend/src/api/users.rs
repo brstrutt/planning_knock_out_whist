@@ -59,10 +59,7 @@ mod tests {
         #[actix_web::test]
         async fn list_empty() {
             // Setup actix
-            let app_data = web::Data::new(AppState {
-                message: Mutex::new(String::from("")),
-                sessions: Mutex::new(Vec::new()),
-            });
+            let app_data = web::Data::new(AppState::default());
             let app =
                 test::init_service(App::new().app_data(app_data.clone()).service(super::list))
                     .await;
@@ -78,26 +75,23 @@ mod tests {
         #[actix_web::test]
         async fn list() {
             // Setup actix
-            let app_data = web::Data::new(AppState {
-                message: Mutex::new(String::from("")),
-                sessions: Mutex::new(vec![
-                    Session {
-                        uuid: String::from("1"),
-                        id: 1,
-                        name: Some(String::from("testing")),
-                    },
-                    Session {
-                        uuid: String::from("several"),
-                        id: 2,
-                        name: None,
-                    },
-                    Session {
-                        uuid: String::from("Third"),
-                        id: 3,
-                        name: Some(String::from("manymanymanyword long name here")),
-                    },
-                ]),
+            let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("1"),
+                id: 1,
+                name: Some(String::from("testing")),
             });
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("several"),
+                id: 2,
+                name: None,
+            });
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("Third"),
+                id: 3,
+                name: Some(String::from("manymanymanyword long name here")),
+            });
+
             let app =
                 test::init_service(App::new().app_data(app_data.clone()).service(super::list))
                     .await;
