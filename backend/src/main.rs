@@ -29,6 +29,7 @@ async fn main() -> std::io::Result<()> {
                 .service(api::session::create_session)
                 .service(api::session::list_sessions)
                 .service(api::session::set_name)
+                .service(api::users::list)
             )
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(
