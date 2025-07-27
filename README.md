@@ -45,5 +45,5 @@ To run the release build locally, run `docker run -p 8080:8080 ghcr.io/brstrutt/
 - [ ] Add clearer "Join the room" screen when a user first loads the website
 - [ ] Make the backend regularly clear out old sessions
 - [ ] Let users change their own name
-- [ ] Figure out how to stop sending the session uuid in the sessions list
-- [ ] think more about the API structure. It is currently shit.
+- [x] Figure out how to stop sending the session uuid in the sessions list
+- [x] think more about the API structure. It is currently shit.
