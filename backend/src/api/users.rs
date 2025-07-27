@@ -117,19 +117,22 @@ mod tests {
         }
     }
 
-    // Get
-    // Test a valid user ID produces the correct user data
-    // Test a non-existant user ID produces a 404 error
-    // Test an invalid user Id produces a 404 error
+    mod get {
+        // Test a valid user ID produces the correct user data
+        // Test a non-existant user ID produces a 404 error
+        // Test an invalid user Id produces a 404 error
+    }
 
-    // Create
-    // Test a missing UUID returns a bad_request error
-    // Test a valid UUID returns the expected new user and that user is persisted
+    mod create {
+        // Test a missing UUID returns a bad_request error
+        // Test a valid UUID returns the expected new user and that user is persisted
+    }
 
-    // Update
-    // Test a missing UUID returns a bad_request error
-    // Test a UUID that doesn't match the modified user returns a forbidden error
-    // Test modifying a non-existant user returns 404
-    // Test modification of ID throws bad_request
-    // Test modification of Name works fine
+    mod update {
+        // Test a missing UUID returns a bad_request error
+        // Test a UUID that doesn't match the modified user returns a forbidden error
+        // Test modifying a non-existant user returns 404
+        // Test modification of ID throws bad_request
+        // Test modification of Name works fine
+    }
 }
