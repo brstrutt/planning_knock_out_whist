@@ -1,7 +1,7 @@
 use actix_web::{HttpResponse, Responder, get, post, put, web};
 use serde::{Deserialize, Serialize};
 
-use crate::state::AppState;
+use crate::state::{AppState, Session};
 
 // GET
 #[derive(Serialize, Deserialize)]
@@ -10,21 +10,26 @@ struct User {
     name: String,
 }
 
+impl User {
+    pub fn from_session(session: Session) -> Self {
+        User {
+            id: session.id.to_string(),
+            name: session
+                .name
+                .unwrap_or(format!("Unknown User {}", session.id)),
+        }
+    }
+}
+
 #[get("/users/{id}")]
 pub async fn get(path: web::Path<(u32,)>, data: web::Data<AppState>) -> impl Responder {
     let id = path.into_inner().0;
-    let users = data.sessions.lock().unwrap();
-    let user = users.iter().find(|user| user.id == id);
+    let sessions = data.sessions.lock().unwrap();
+    let session = sessions.iter().find(|user| user.id == id);
 
-    match user {
+    match session {
         None => HttpResponse::NotFound().body("User not found with the specified ID"),
-        Some(user) => HttpResponse::Ok().json(User {
-            id: user.id.to_string(),
-            name: user
-                .name
-                .clone()
-                .unwrap_or(format!("Unknown User {}", user.id)),
-        }),
+        Some(session) => HttpResponse::Ok().json(User::from_session(session.clone())),
     }
 }
 
@@ -34,13 +39,7 @@ pub async fn list(data: web::Data<AppState>) -> impl Responder {
     let current_sessions = data.sessions.lock().unwrap();
     let users: Vec<User> = current_sessions
         .iter()
-        .map(|session| User {
-            id: session.id.clone().to_string(),
-            name: session
-                .name
-                .clone()
-                .unwrap_or(format!("Unknown User {}", session.id.clone())),
-        })
+        .map(|session| User::from_session(session.clone()))
         .collect();
 
     web::Json(users)

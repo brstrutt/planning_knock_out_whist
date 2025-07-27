@@ -1,5 +1,6 @@
 use std::sync::Mutex;
 
+#[derive(Clone)]
 pub struct Session {
     pub uuid: String,
     pub id: u32,
