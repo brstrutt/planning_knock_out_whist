@@ -124,26 +124,31 @@ mod tests {
     }
 
     mod get {
+        use actix_web::http::StatusCode;
+
         use super::*;
 
         #[actix_web::test]
         async fn get_missing_user() {
             // Setup actix
             let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("123-456-789"),
+                id: 97, // ASCII letter `a`
+                name: Some(String::from("A very real name")),
+            });
             let app =
                 test::init_service(App::new().app_data(app_data.clone()).service(super::get)).await;
+
+            // Test invalid ID returns 404
+            let req = test::TestRequest::get().uri("/users/a").to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::NOT_FOUND);
 
             // Test missing ID returns 404
             let req = test::TestRequest::get().uri("/users/1337").to_request();
             let resp = test::call_service(&app, req).await;
-            assert_eq!(resp.status(), 404);
-
-            // Test invalid ID returns 404
-            let req = test::TestRequest::get()
-                .uri("/users/im_not_valid")
-                .to_request();
-            let resp = test::call_service(&app, req).await;
-            assert_eq!(resp.status(), 404);
+            assert_eq!(resp.status(), StatusCode::NOT_FOUND);
         }
 
         #[actix_web::test]
