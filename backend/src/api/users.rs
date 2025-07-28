@@ -1,4 +1,4 @@
-use actix_web::{HttpResponse, Responder, get, post, put, web};
+use actix_web::{HttpResponse, Responder, get, post, web};
 use serde::{Deserialize, Serialize};
 
 use crate::state::{AppState, Session};
@@ -84,7 +84,7 @@ pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> 
 }
 
 // UPDATE
-#[put("/users/{id}")]
+#[post("/users/{id}")]
 pub async fn update() -> impl Responder {
     HttpResponse::NotImplemented()
 }
@@ -92,6 +92,7 @@ pub async fn update() -> impl Responder {
 #[cfg(test)]
 mod tests {
     use crate::state::{AppState, Session};
+    use actix_web::http::{StatusCode, header::ContentType};
     use actix_web::{App, test, web};
 
     use super::*;
@@ -155,8 +156,6 @@ mod tests {
     }
 
     mod get {
-        use actix_web::http::StatusCode;
-
         use super::*;
 
         #[actix_web::test]
@@ -204,8 +203,6 @@ mod tests {
     }
 
     mod create {
-        use actix_web::http::{StatusCode, header::ContentType};
-
         use super::*;
 
         #[actix_web::test]
@@ -321,10 +318,84 @@ mod tests {
 
     mod update {
         use super::*;
-        // Test a missing UUID returns a bad_request error
-        // Test a UUID that doesn't match the modified user returns a forbidden error
-        // Test modifying a non-existant user returns 404
-        // Test modification of ID throws bad_request
-        // Test modification of Name works fine
+
+        #[actix_web::test]
+        async fn update_user_incorrectly() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("testing-uuid-123"),
+                id: 123,
+                name: Some(String::from("Schmebulock the THIRD")),
+            });
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::update))
+                    .await;
+
+            // Test missing body returns bad_request
+            let req = test::TestRequest::post().uri("/users/123").to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+
+            // Test a missing UUID returns a bad_request error
+            let req = test::TestRequest::post()
+                .uri("/users/123")
+                .insert_header(ContentType::json())
+                .set_payload(r#"{"name": "Pinnochio"}"#)
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+
+            // Test a UUID that doesn't match the modified user returns a forbidden error
+            let req = test::TestRequest::post()
+                .uri("/users/123")
+                .insert_header(ContentType::json())
+                .set_payload(r#"{"uuid": "im-the-wrong-uuid", "name": "Pinnochio"}"#)
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::FORBIDDEN);
+
+            // Test modifying a non-existant user returns 404
+            let req = test::TestRequest::post()
+                .uri("/users/879")
+                .insert_header(ContentType::json())
+                .set_payload(r#"{"uuid": "im-the-wrong-uuid", "name": "Pinnochio"}"#)
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+
+            // Test modification of ID throws bad_request
+            let req = test::TestRequest::post()
+                .uri("/users/123")
+                .insert_header(ContentType::json())
+                .set_payload(r#"{"uuid": "testing-uuid-123", "id": "978", "name": "Pinnochio"}"#)
+                .to_request();
+            let resp = test::call_service(&app, req).await;
+            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+        }
+
+        #[actix_web::test]
+        async fn update_user() {
+            // Setup actix
+            let app_data = web::Data::new(AppState::default());
+            app_data.sessions.lock().unwrap().push(Session {
+                uuid: String::from("testing-uuid-123"),
+                id: 123,
+                name: Some(String::from("Schmebulock the THIRD")),
+            });
+            let app =
+                test::init_service(App::new().app_data(app_data.clone()).service(super::update))
+                    .await;
+
+            // Test modification of Name works fine
+            let req = test::TestRequest::post()
+                .uri("/users/123")
+                .insert_header(ContentType::json())
+                .set_payload(r#"{"uuid": "testing-uuid-123", "name": "Pinnochio"}"#)
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "123");
+            assert_eq!(resp.name, "Pinnochio");
+        }
     }
 }
