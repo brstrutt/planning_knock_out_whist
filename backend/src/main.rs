@@ -17,12 +17,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
             .app_data(data.clone())
-            .service(
-                web::scope("/api")
-                    .service(api::hey::get_hey)
-                    .service(api::hey::post_hey)
-                    .service(api::users::api()),
-            )
+            .service(web::scope("/api").service(api::users::api()))
             // Put this last, else it will claim the entire "/" namespace and none of the other services under it will respond
             .service(
                 Files::new("/", "./public")

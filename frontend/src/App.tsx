@@ -18,7 +18,6 @@ const App = () => {
   return (
     <div>
       <Header />
-      <PersistentMessage />
       <div>Current Name: {myUser.name}</div>
       <NameInputField session_uuid={session_uuid} user={myUser} />
       <Sessions />
@@ -42,13 +41,6 @@ function useSessionUuid(): string {
 
 function Header(): JSX.Element {
   return <h1>Testing the API!</h1>;
-}
-
-function PersistentMessage(): JSX.Element {
-  const getData = api.hey.useGet();
-  return (
-    <p>Persistent Message: {getData.text}</p>
-  );
 }
 
 function NameInputField(props: { session_uuid: string, user: User }): JSX.Element {
