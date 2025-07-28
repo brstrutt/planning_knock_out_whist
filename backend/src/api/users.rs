@@ -3,6 +3,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::state::{AppState, Session};
 
+pub fn api() -> actix_web::Scope {
+    web::scope("/users")
+        .service(get)
+        .service(list)
+        .service(create)
+        .service(update)
+}
+
 // GET
 #[derive(Serialize, Deserialize)]
 struct User {
@@ -21,8 +29,8 @@ impl User {
     }
 }
 
-#[get("/users/{id}")]
-pub async fn get(path: web::Path<(u32,)>, data: web::Data<AppState>) -> impl Responder {
+#[get("/{id}")]
+async fn get(path: web::Path<(u32,)>, data: web::Data<AppState>) -> impl Responder {
     let id = path.into_inner().0;
     let sessions = data.sessions.lock().unwrap();
     let session = sessions.iter().find(|user| user.id == id);
@@ -34,8 +42,8 @@ pub async fn get(path: web::Path<(u32,)>, data: web::Data<AppState>) -> impl Res
 }
 
 // LIST
-#[get("/users")]
-pub async fn list(data: web::Data<AppState>) -> impl Responder {
+#[get("")]
+async fn list(data: web::Data<AppState>) -> impl Responder {
     let current_sessions = data.sessions.lock().unwrap();
     let users: Vec<User> = current_sessions
         .iter()
@@ -51,8 +59,8 @@ struct NewUser {
     uuid: String,
     name: Option<String>,
 }
-#[post("/users")]
-pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> impl Responder {
+#[post("")]
+async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> impl Responder {
     let mut current_sessions = data.sessions.lock().unwrap();
 
     let existing_session = current_sessions
@@ -89,8 +97,8 @@ struct ModifiedUser {
     uuid: String,
     name: String,
 }
-#[post("/users/{id}")]
-pub async fn update(
+#[post("/{id}")]
+async fn update(
     path: web::Path<(u32,)>,
     req_body: web::Json<ModifiedUser>,
     data: web::Data<AppState>,
