@@ -101,13 +101,17 @@ pub async fn update(
     let mut current_sessions = data.sessions.lock().unwrap();
     let session = current_sessions.iter_mut().find(|session| session.id == id);
 
-    if session.is_some() {
-        let session = session.unwrap();
-        session.name = Some(req_body.name.clone());
-        return HttpResponse::Ok().json(User::from_session(session.clone()));
-    } else {
+    if session.is_none() {
         return HttpResponse::NotFound().body("User not found with the specified ID");
     }
+    let session = session.unwrap();
+
+    if session.uuid != req_body.uuid {
+        return HttpResponse::Forbidden().body("You do not have permission to modify this user");
+    }
+
+    session.name = Some(req_body.name.clone());
+    HttpResponse::Ok().json(User::from_session(session.clone()))
 }
 
 #[cfg(test)]
@@ -384,15 +388,6 @@ mod tests {
                 .to_request();
             let resp = test::call_service(&app, req).await;
             assert_eq!(resp.status(), StatusCode::NOT_FOUND);
-
-            // Test modification of ID throws bad_request
-            let req = test::TestRequest::post()
-                .uri("/users/123")
-                .insert_header(ContentType::json())
-                .set_payload(r#"{"uuid": "testing-uuid-123", "id": "978", "name": "Pinnochio"}"#)
-                .to_request();
-            let resp = test::call_service(&app, req).await;
-            assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
         }
 
         #[actix_web::test]
@@ -417,6 +412,18 @@ mod tests {
             let resp: super::User = test::call_and_read_body_json(&app, req).await;
             assert_eq!(resp.id, "123");
             assert_eq!(resp.name, "Pinnochio");
+
+            // Test modification of ID gets ignored
+            let req = test::TestRequest::post()
+                .uri("/users/123")
+                .insert_header(ContentType::json())
+                .set_payload(
+                    r#"{"uuid": "testing-uuid-123", "id": "978", "name": "Gerrymander Himself"}"#,
+                )
+                .to_request();
+            let resp: super::User = test::call_and_read_body_json(&app, req).await;
+            assert_eq!(resp.id, "123");
+            assert_eq!(resp.name, "Gerrymander Himself");
         }
     }
 }
