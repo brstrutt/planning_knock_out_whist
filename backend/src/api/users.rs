@@ -46,9 +46,23 @@ pub async fn list(data: web::Data<AppState>) -> impl Responder {
 }
 
 // CREATE
+#[derive(Deserialize)]
+struct NewUser {
+    uuid: String,
+    name: Option<String>,
+}
 #[post("/users")]
-pub async fn create() -> impl Responder {
-    HttpResponse::NotImplemented()
+pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> impl Responder {
+    let mut current_sessions = data.sessions.lock().unwrap();
+
+    let new_session = Session {
+        uuid: req_body.uuid.clone(),
+        id: 1,
+        name: req_body.name.clone(),
+    };
+
+    current_sessions.push(new_session.clone());
+    web::Json(User::from_session(new_session))
 }
 
 // UPDATE
