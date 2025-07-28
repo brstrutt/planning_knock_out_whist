@@ -54,17 +54,33 @@ struct NewUser {
 #[post("/users")]
 pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> impl Responder {
     let mut current_sessions = data.sessions.lock().unwrap();
-    let mut next_user_id = data.next_user_id.lock().unwrap();
 
-    let new_session = Session {
-        uuid: req_body.uuid.clone(),
-        id: *next_user_id,
-        name: req_body.name.clone(),
-    };
+    let existing_session = current_sessions
+        .iter_mut()
+        .find(|session| session.uuid == req_body.uuid);
 
-    current_sessions.push(new_session.clone());
-    *next_user_id = *next_user_id + 1;
-    web::Json(User::from_session(new_session))
+    if existing_session.is_some() {
+        let existing_session = existing_session.unwrap();
+
+        if req_body.name.is_some() {
+            existing_session.name = req_body.name.clone();
+        }
+
+        return web::Json(User::from_session(existing_session.clone()));
+    } else {
+        let mut next_user_id = data.next_user_id.lock().unwrap();
+
+        let new_session = Session {
+            uuid: req_body.uuid.clone(),
+            id: *next_user_id,
+            name: req_body.name.clone(),
+        };
+
+        current_sessions.push(new_session.clone());
+        *next_user_id = *next_user_id + 1;
+
+        return web::Json(User::from_session(new_session));
+    }
 }
 
 // UPDATE
@@ -277,7 +293,7 @@ mod tests {
                 .to_request();
             let resp: super::User = test::call_and_read_body_json(&app, req).await;
             assert_eq!(resp.id, "123");
-            assert_eq!(resp.id, "Benjo the Banjo");
+            assert_eq!(resp.name, "Benjo the Banjo");
             assert_eq!(app_data.sessions.lock().unwrap().len(), 1);
 
             // Test reusing ID and providing name returns the already existing user with the new name
@@ -293,7 +309,7 @@ mod tests {
                 .to_request();
             let resp: super::User = test::call_and_read_body_json(&app, req).await;
             assert_eq!(resp.id, "123");
-            assert_eq!(resp.id, "Pinnochio");
+            assert_eq!(resp.name, "Pinnochio");
             assert_eq!(app_data.sessions.lock().unwrap().len(), 1);
         }
 
