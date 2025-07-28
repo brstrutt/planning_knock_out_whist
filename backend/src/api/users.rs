@@ -54,14 +54,16 @@ struct NewUser {
 #[post("/users")]
 pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> impl Responder {
     let mut current_sessions = data.sessions.lock().unwrap();
+    let mut next_user_id = data.next_user_id.lock().unwrap();
 
     let new_session = Session {
         uuid: req_body.uuid.clone(),
-        id: 1,
+        id: *next_user_id,
         name: req_body.name.clone(),
     };
 
     current_sessions.push(new_session.clone());
+    *next_user_id = *next_user_id + 1;
     web::Json(User::from_session(new_session))
 }
 
