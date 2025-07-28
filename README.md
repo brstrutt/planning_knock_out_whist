@@ -42,8 +42,9 @@ To run the release build locally, run `docker run -p 8080:8080 ghcr.io/brstrutt/
 
 (just some tasks I should do. These probably belong on some kind of kanban board but I'm gonna put them here instead because it's easier)
 
-- [ ] Add clearer "Join the room" screen when a user first loads the website
 - [ ] Make the backend regularly clear out old sessions
-- [ ] Let users change their own name
-- [x] Figure out how to stop sending the session uuid in the sessions list
-- [x] think more about the API structure. It is currently shit.
+- [ ] add documentation to the API
+- [ ] refactor frontend quite significantly
+- [ ] update frontend appearence
+- [ ] run unit tests as part of CI/CD
+- [ ] update linting/formatting rules to use a CONSISTENT tab width in typescript files
