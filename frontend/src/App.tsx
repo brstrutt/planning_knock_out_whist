@@ -1,31 +1,26 @@
 import './App.css';
-import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from 'react';
+import { useCallback, useMemo, useRef, type JSX } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import * as api from './api';
 import { Sessions } from './sessions';
-import { ConnectResponseType } from './api/session';
+
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import type { User } from './api/users';
 
 const App = () => {
   const session_uuid = useSessionUuid();
 
-  const session = api.session.useConnect(session_uuid);
-
-  const [showNameSelector, setShowNameSelector] = useState<boolean>(false);
-  useEffect(
-    () => {
-      const showIt = session.session_status === ConnectResponseType.SessionCreated;
-      console.log(ConnectResponseType.SessionCreated);
-      console.log(session.session_status);
-      setShowNameSelector(showIt);
-    },
-    [session.session_status],
-  )
+  const myUser = useSuspenseQuery({
+    queryKey: ['users', 'me'],
+    queryFn: () => api.users.create(session_uuid)
+  }).data;
 
   return (
     <div>
       <Header />
       <PersistentMessage />
-      {showNameSelector && <NameInputField session_uuid={session_uuid} />}
+      <div>Current Name: {myUser.name}</div>
+      <NameInputField session_uuid={session_uuid} user={myUser} />
       <Sessions />
     </div>
   );
@@ -56,14 +51,18 @@ function PersistentMessage(): JSX.Element {
   );
 }
 
-function NameInputField(props: { session_uuid: string }): JSX.Element {
-  const { session_uuid } = props;
+function NameInputField(props: { session_uuid: string, user: User }): JSX.Element {
+  const { session_uuid, user } = props;
   const messageInput = useRef<HTMLInputElement>(null);
 
-  const setName = api.session.useSetName();
+  const queryClient = useQueryClient();
+  const setName = useMutation({
+    mutationFn: (newName: string) => api.users.update(session_uuid, { ...user, name: newName }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
+  });
   const submit = useCallback(
-    () => setName.mutate({ session_uuid: session_uuid, name: messageInput.current?.value ?? 'Error: could not find input element' }),
-    [session_uuid, setName],
+    () => setName.mutate(messageInput.current?.value ?? 'Error: Name was set but input field could not be found!'),
+    [setName],
   );
 
   return <>
