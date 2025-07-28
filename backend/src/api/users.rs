@@ -84,9 +84,30 @@ pub async fn create(req_body: web::Json<NewUser>, data: web::Data<AppState>) -> 
 }
 
 // UPDATE
+#[derive(Deserialize)]
+struct ModifiedUser {
+    uuid: String,
+    name: String,
+}
 #[post("/users/{id}")]
-pub async fn update() -> impl Responder {
-    HttpResponse::NotImplemented()
+pub async fn update(
+    path: web::Path<(u32,)>,
+    req_body: web::Json<ModifiedUser>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let id = path.into_inner().0;
+    print!("id: {}", id);
+
+    let mut current_sessions = data.sessions.lock().unwrap();
+    let session = current_sessions.iter_mut().find(|session| session.id == id);
+
+    if session.is_some() {
+        let session = session.unwrap();
+        session.name = Some(req_body.name.clone());
+        return HttpResponse::Ok().json(User::from_session(session.clone()));
+    } else {
+        return HttpResponse::NotFound().body("User not found with the specified ID");
+    }
 }
 
 #[cfg(test)]
