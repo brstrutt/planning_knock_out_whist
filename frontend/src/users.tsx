@@ -1,6 +1,7 @@
 import { useMemo, type JSX } from "react";
 import * as api from './api';
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { NameInputField } from "./name-input";
 
 export function UsersList(props: { excludeIds?: number[] }): JSX.Element {
     const { excludeIds = [] } = props;
@@ -24,5 +25,14 @@ function UserCard(props: { user: api.users.User }): JSX.Element {
     const { user } = props;
     return (
         <div className='userCard'>{user.name}</div>
+    );
+}
+
+export function CurrentUserCard(props: { user: api.users.User, session_uuid: string }): JSX.Element {
+    const { user, session_uuid } = props;
+    return (
+        <div className='userCard'>
+            <NameInputField session_uuid={session_uuid} user={user} />
+        </div>
     );
 }
