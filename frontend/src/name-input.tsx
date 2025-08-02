@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type JSX } from "react";
+import { useCallback, useEffect, useRef, type FormEvent, type JSX } from "react";
 import type { User } from "./api/users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as api from './api';
@@ -24,7 +24,10 @@ export function NameInputField(props: { session_uuid: string, user: User }): JSX
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
     });
     const submit = useCallback(
-        () => setName.mutate(messageInput.current?.value ?? 'Error: Name was set but input field could not be found!'),
+        (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            setName.mutate(messageInput.current?.value ?? 'Error: Name was set but input field could not be found!');
+        },
         [setName],
     );
 
@@ -32,7 +35,7 @@ export function NameInputField(props: { session_uuid: string, user: User }): JSX
         <form
             onSubmit={submit}
         >
-            <input ref={messageInput} />
+            <input id='my-user-name-input' ref={messageInput} />
         </form>
     </>;
 }
