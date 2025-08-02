@@ -20,7 +20,7 @@ const App = () => {
       <Header />
       <div>Current Name: {myUser.name}</div>
       <NameInputField session_uuid={session_uuid} user={myUser} />
-      <Sessions />
+      <Sessions excludeIds={[myUser.id]} />
     </div>
   );
 };
