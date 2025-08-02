@@ -2,7 +2,7 @@ import { useMemo, type JSX } from "react";
 import * as api from './api';
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function Sessions(props: { excludeIds?: number[] }): JSX.Element {
+export function UsersList(props: { excludeIds?: number[] }): JSX.Element {
     const { excludeIds = [] } = props;
     const users = useSuspenseQuery({
         queryKey: ['users'],
@@ -11,18 +11,18 @@ export function Sessions(props: { excludeIds?: number[] }): JSX.Element {
 
     const filteredUsers = useMemo(() => users.filter(user => !excludeIds.includes(user.id)), [users, excludeIds]);
 
-    return <div className='Sessions'>
+    return <div className='UsersList'>
         {
             filteredUsers.map(
-                user => <Session key={user.id} user={user} />
+                user => <UserCard key={user.id} user={user} />
             )
         }
     </div>;
 }
 
-function Session(props: { user: api.users.User }): JSX.Element {
+function UserCard(props: { user: api.users.User }): JSX.Element {
     const { user } = props;
     return (
-        <div className='session'>{user.name}</div>
+        <div className='userCard'>{user.name}</div>
     );
 }

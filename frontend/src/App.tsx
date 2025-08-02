@@ -2,7 +2,7 @@ import './App.css';
 import { useCallback, useMemo, useRef, type JSX } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import * as api from './api';
-import { Sessions } from './sessions';
+import { UsersList } from './users';
 
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import type { User } from './api/users';
@@ -20,7 +20,7 @@ const App = () => {
       <Header />
       <div>Current Name: {myUser.name}</div>
       <NameInputField session_uuid={session_uuid} user={myUser} />
-      <Sessions excludeIds={[myUser.id]} />
+      <UsersList excludeIds={[myUser.id]} />
     </div>
   );
 };
