@@ -12,7 +12,7 @@ export function UsersList(props: { excludeIds?: number[] }): JSX.Element {
 
     const filteredUsers = useMemo(() => users.filter(user => !excludeIds.includes(user.id)), [users, excludeIds]);
 
-    return <div className='UsersList'>
+    return <div>
         {
             filteredUsers.map(
                 user => <UserCard key={user.id} user={user} />
